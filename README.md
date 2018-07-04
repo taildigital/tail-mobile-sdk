@@ -1,2 +1,3 @@
-# tail-mobile-sdk
-SDK Mobile
+# Tail SDK Mobile
+Sdk library for Android devices
+
