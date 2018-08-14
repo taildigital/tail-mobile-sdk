@@ -802,9 +802,9 @@ A biblioteca fornece um mecanismo de automatização de coleta e envio dos dados
         &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPActivityTrackerIntentService&quot; android:exported=&quot;false&quot; android:label=&quot;Tail DMP Activity Service&quot; /&gt;
     &lt;/application&gt;
 &lt;/manifest&gt;
-</code></pre><h4 id="adicionar-a-biblioteca-ao-seu-projeto">Adicionar a biblioteca ao seu projeto</h4>
+</code></pre><h4 id="adicionar-biblioteca-aar-no-projeto">Adicionar Biblioteca AAR no projeto</h4>
 <p>Nossa biblioteca é distribuida pelo mavencentral.</p>
-<p>A biblioteca do SDK já incorpora a seguinte biblioteca em seu pacote:</p>
+<p>A biblioteca do SDK já incorpora as seguintes bibliotecas em seu pacote:</p>
 <ul>
 <li>com.google.code.gson:gson:2.8.0</li>
 </ul>
@@ -831,12 +831,13 @@ Abaixo um exemplo de como ficaria a configuração do dependencies do arquivo <e
 <pre>
 dependencies {
 
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //import google play libs
     <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
     <b>compile 'com.google.android.gms:play-services-location:10.2.4'</b>
     //get sdk from maven central
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.21'</b>
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.22'</b>
 
 }
 </pre>
@@ -867,20 +868,17 @@ android {
 }
 
 dependencies {
-
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     //import google play libs
-    <b>
-    compile 'com.google.android.gms:play-services-identity:10.2.4'
-    compile 'com.google.android.gms:play-services-location:10.2.4'
+    <b>compile 'com.google.android.gms:play-services-identity:10.2.4'
+    compile 'com.google.android.gms:play-services-location:10.2.4'</b>
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    </b>
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.21'</b>
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.22'</b>
 
 }
 </pre>
-
 
 
 <h2 id="atualizar-security-providers-do-google-play-services-em-android-4-x">Atualizar Security Providers  do Google Play Services em Android 4.x</h2>
@@ -895,7 +893,7 @@ Neste caso, sugerimos que peça ao usuário que atualize a versão do dos Provid
 Este objeto é um singleton e deve ser inicializado apenas uma vez passando o contexto da aplicação.</p>
 <h4 id="configurar-o-sdk">Configurar o SDK</h4>
 <p>Devemos definir alguns parametros de configuração do SDK. 
-Abaixo um exemplo de configuração para versões Android 5.0 e superior para Android 4.x veja o tópico <a href="#enviar-dados-sem-agendamento-autom-tico">Enviar dados sem agendamento automático</a>:</p>
+Abaixo um exemplo de configuração:</p>
 <pre>    
 //Reference to a textfield on user interface
 public TextView user_txtV;    
@@ -907,7 +905,7 @@ TailDMP.initialize(getApplicationContext());
 //Generate an userhash ID using an email provided by a text field 
 TailDMP.getInstance().generateUserHashFromEmail(user_txtV.getText().toString());
 
-// Set user as optin (required)
+// Set user as optin
 TailDMP.getInstance().setOptin(true);
 
 //interval, in minutes, to collect data from deivce 
@@ -927,7 +925,7 @@ Estes serviços <strong>rodam nos estados de foreground e background do app</str
 <pre><code>//Start the job
 TailDMP.getInstance().startJob();
 </code></pre><p>Você pode iniciar o processo onde achar mais adequado, num click, ao abrir o app, após inicialização de seu app, etc.  </p>
-<p>Abaixo segue um exemplo de configuração e uso do sdk para versões a partir de Android 4.0.</p>
+<p>Abaixo segue um exemplo de configuração e uso do sdk.</p>
 <p>Ex.</p>
 <pre>
 package tail.digital.app;
@@ -962,11 +960,8 @@ public class MainActivity extends AppCompatActivity {
             //interval, in minutes, to send data to server 
             int intervalToSendData = 120;
 
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {    
-                //Set interval that will fires up the collectDataJob and the sendDataJob (required)
-                TailDMP.getInstance().setIntervalToExecuteJob(intervalToCollectData,intervalToSendData);
-            }
-
+            //Set interval that will fires up the collectDataJob and the sendDataJob (required)
+            TailDMP.getInstance().setIntervalToExecuteJob(intervalToCollectData,intervalToSendData);
         } catch (TailDMPException e) {                              
             e.printStackTrace();
         }
@@ -977,7 +972,7 @@ public class MainActivity extends AppCompatActivity {
     public void startIt(View view){
         try {
 
-            //Generate an userhash ID using an email provided by a text field 
+             //Generate an userhash ID using an email provided by a text field 
             TailDMP.getInstance().generateUserHashFromEmail(user_txtV.getText().toString());
 
            //get the instance of TailDMP SDK and start automatic job  or send data 
@@ -992,9 +987,6 @@ public class MainActivity extends AppCompatActivity {
                 TailDMP.getInstance().sendData("");
 
             }
-
-
-
         }catch (TailDMPException e) {
             e.printStackTrace();
         }
@@ -1063,14 +1055,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    <b>private askPermission(){
+    <b>private void askPermission(){
 
         //check if the user allow us to use some private resources of this device
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             //We can add more than one  per requirement
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.RECEIVE_BOOT_COMPLETED},123);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},123);
         }        
 
     }</b>
@@ -1082,7 +1074,7 @@ public class MainActivity extends AppCompatActivity {
             //Generate an userhash ID using an email provided by a text field 
             TailDMP.getInstance().generateUserHashFromEmail(user_txtV.getText().toString());
 
-            //get the instance of TailDMP SDK and start the job
+            //get the instance of TailDMP SDK and stop the job
             TailDMP.getInstance().startJob();
         }catch (TailDMPException e) {
             e.printStackTrace();
@@ -1123,21 +1115,13 @@ Note que é necessário enviar uma <strong>tag</strong> como parametro. O valor 
             // Set user as optin (required)
             TailDMP.getInstance().setOptin(true);
 
+            //Send data to webservice without a scheduled job Service, passing an enpty string as tag.
+            TailDMP.getInstance().sendData(&quot;&quot;);
+
 
         } catch (TailDMPException e) {
             e.printStackTrace();
         }
-    }
-
-    private void clickButton(View view){
-
-        try {
-          //Send data to webservice without a scheduled job Service, passing an enpty string as tag.
-            TailDMP.getInstance().sendData(&quot;&quot;);
-        }catch (TailDMPException e) {
-            e.printStackTrace();
-        }
-
     }
 
 }
@@ -1146,7 +1130,7 @@ Note que é necessário enviar uma <strong>tag</strong> como parametro. O valor 
 Por padrão esta funcionalidade vem desabilitada.</p>
 <p>Quando essa opção está habilitada os dados serão direcionados para um serviço que os descriptografa e os exibe na área de &quot;SDK SandBox&quot; do Dashboard da TailTarget.
 Estes dados nunca serão processados, a função do modo Sandbox é prover uma interface para conferir se o SDK está configurado corretamente em seu app e se os dados estão sendo enviados com sucesso.</p>
-<p>A área de Sandbox do Dashboard pode ser acessada pelo menu Configurações &gt; Configurações Avançadas &gt; SDK SandBox </p>
+<p>A área de Sandbox do Dashboard pode ser acessada pelo menu Configurações &gt; Configurações Avançadas &gt; SDK SandBox ou acessada pela URL: <a href="https://dashboard.tailtarget.com/dmp/#/sandbox">https://dashboard.tailtarget.com/dmp/#/sandbox</a></p>
 <p><strong>ATENÇÃO! Antes de publicar o seu app com o SDK desabilite o modo SandBox ou os dados enviados por seu app nunca serão processados.</strong> </p>
 <p>Abaixo um exemplo de como habilitar o modo Sandbox:</p>
 <pre>
@@ -1172,6 +1156,10 @@ Estes dados nunca serão processados, a função do modo Sandbox é prover uma i
 
 
 
+
+
+
+
 <h4 id="adicionar-tags-ao-envio-autom-tico-do-sdk">Adicionar Tags Ao envio automático do SDK</h4>
 <p>Tags são informações extras que podem ser enviadas para o webservice.
 A informação não pode ser vazia, deve ter no máximo 32 caracteres, pode conter letras, números e os seguintes caracteres especiais: - _ . = </p>
@@ -1188,7 +1176,362 @@ String mytag = &quot;onlineChannel&quot;;
 
 if(tDMP != null)
 tDMP.addTags(mytag);
-</code></pre><h2 id="sum-rio-de-classes">Sumário de Classes</h2>
+</code></pre><h2 id="beacons">BEACONS</h2>
+<h4 id="configurando-beacons-para-serem-detectados-pelo-taildmp-sdk">Configurando Beacons para serem detectados pelo TailDMP SDK</h4>
+<p>Nossa biblioteca pode ser utilizada para detectar beacons, porém esta funcionalidade está disponível apenas nas versões de <strong>android api  &gt;=21</strong></p>
+<p>O SDK suporta o protocolo <a href="https://developers.google.com/beacons/eddystone" target="_blank"><b>Eddystone-UID</b></a>
+ que possui um identificador único de formato de mensagem para cada dispositivo. 
+O identificador é dividido de duas partes, <em>Namespace</em> (10 bytes) e  <em>Instance</em> (6 bytes).</p>
+<p>O Namespace é utilizado para filtrar seus beacons de outros existentes na área e o Instance para identificar e diferenciar cada um dos seus beacons.   </p>
+<p>Para seu beacon ser detectado pelo nosso SDK é obrigatório que no formato de mensagem o  <strong>Namespace</strong> possua o valor de <strong>CFB3DBE6A3E1B065C4BB</strong>.</p>
+<p>O valor de <strong>Instance</strong> pode ser personalizado para cada dispositivo ex: 112233445566, 112233445567 .</p>
+<p>O beacon deverá emitir um sinal com o protocolo Eddystone-UID semelhante ao exemplo abaixo:</p>
+<pre>
+Ex: CFB3DBE6A3E1B065C4BB112233445566
+</pre>
+
+<p>Utilizamos a biblioteca &quot;Nearby&quot; do Google para controlar o processo de procura por beacons no dispositivo do usuário. Para o correto funcionamento, o serviço geolocalização deve estar habilitado pelo usuário.</p>
+<p>A procura por beacons é iniciada nos eventos ON/OFF de tela do Android. </p>
+<p>A detecção dos Beacons <strong>depende do bluetooth estar ativo</strong> aconselhamos que na sua estratégia de construção do App inclua mecanismos que estimulem o usuário a mantê-lo ligado.</p>
+<p>É necessário nos enviar todos os InstanceIds criados para podermos registra-los e fazer o rastreamento correto pelo SDK.</p>
+<h2 id="configurar-o-sdk-para-detectar-beacons">Configurar o SDK para detectar beacons</h2>
+<h3 id="configura-es-requeridas">Configurações requeridas</h3>
+<h4 id="permiss-es-no-androidmanifest">Permissões no AndroidManifest</h4>
+<p>Adicionar as seguintes permissões ao AndroidManifest.xml</p>
+<pre><code>&lt;uses-permission android:name=&quot;android.permission.ACCESS_FINE_LOCATION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
+
+&lt;uses-permission android:name=&#39;android.permission.BLUETOOTH&#39;/&gt;
+&lt;uses-permission android:name=&#39;android.permission.BLUETOOTH_ADMIN&#39;/&gt;
+&lt;uses-feature android:name=&quot;android.hardware.bluetooth_le&quot; android:required=&quot;true&quot;/&gt;
+
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.CHANGE_WIFI_STATE&quot; /&gt;
+
+&lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
+&lt;uses-permission android:name=&quot;com.google.android.gms.permission.ACTIVITY_RECOGNITION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
+</code></pre><p>Adicionar os serviços abaixo dentro da tag aplication</p>
+<pre><code>&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send Data Service&quot;/&gt;
+&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPCollectDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Collect Data Service&quot;/&gt;
+&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendALLDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send All Data Service&quot;/&gt;
+&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.CheckNearByJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Check beacon activity&quot;/&gt;
+&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPActivityTrackerIntentService&quot; android:exported=&quot;false&quot; android:label=&quot;Tail DMP Activity Service&quot; /&gt;
+</code></pre><h4 id="configura-es-graddle">Configurações graddle</h4>
+<p>Para o correto funcionamento do SDK utilizamos bibliotecas do google play service, elas devem ser compiladas junto com aplicativo. 
+Devemos adicionar as bibliotecas com.google.android.gms:play-services-nearby, play-services-location e incorporar o SDK como dependências do gradle.build. </p>
+<p>Abaixo um exemplo de como ficaria a configuração do dependencies do arquivo gradle.build.</p>
+<pre>
+
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "tail.digital.app"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    //import google play libs
+    compile 'com.google.android.gms:play-services-identity:11.0.4'
+    <b>compile 'com.google.android.gms:play-services-location:11.0.4'
+    compile 'com.google.android.gms:play-services-nearby:11.0.4'
+    </b>
+
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    //add and extract the sdk from mavencentral
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.22'</b>
+}
+
+</pre>
+
+
+
+
+
+<h4 id="habilitar-rastreamento-de-beacons-no-app">Habilitar rastreamento de beacons no App</h4>
+<p>Para iniciar a procura por beacons utilizamos o método <strong>TailDMP.getInstance().enableBeaconScan()</strong>.  </p>
+<p>A detecção só acontecerá caso o usuário dê <a href="#permission">permissão</a> para acesso à geolocalização e o bluetooth do dispositivo esteja ativo.</p>
+<p>Toda vez que utilizamos este método, o bluetooth do dispositivo é ligado para permitir a busca por beacons.</p>
+<p>A busca por beacons acontece quando o App está nos estados de foreground e background, o processo roda em uma thread em background, não bloqueia a interface do usuário e utiliza apenas <strong>Bluetooth Low Energy (BLE)</strong> para preservar a carga de bateria. </p>
+<p>Não esqueça de habilitar o envio automático de dados utilizando os métodos  </p>
+<ul>
+<li><strong>TailDMP.getInstance().setIntervalToExecuteJob(minutosPcoletar,minutosPEnviar)</strong> para definir o período de coleta e envio de dados. </li>
+<li><strong>TailDMP.getInstance().startJob()</strong> para iniciar o processo.</li>
+</ul>
+<p>Abaixo segue um exemplo de como habilitar o rastreamento de beacons, do workkflow para pedir permissão de uso de dados de geolocalização e iniciar o processo automático de coleta e envio de dados:</p>
+<pre>
+package digital.tail.apptrackbeacons;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.nearby.messages.MessageListener;
+
+import digital.tail.sdk.tail_mobile_sdk.TailDMP;
+import digital.tail.sdk.tail_mobile_sdk.TailDMPValues;
+import digital.tail.sdk.tail_mobile_sdk.exception.TailDMPException;
+
+
+//We need to handle PermissionsResultCallback so we implement its methods in this activity
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
+
+    private int PERMISSION_REQUEST_ID = 123;
+
+    TextView txt_email;
+
+    Button btEnablebeacon;
+    Button btDisablebeacon;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //get email textfield
+        txt_email = (TextView)findViewById(R.id.txt_email);
+
+
+        //get beacons bts
+        btEnablebeacon = (Button) findViewById(R.id.btEnablebeacon);
+        btDisablebeacon = (Button) findViewById(R.id.btDisablebeacon);
+
+        //setcolors
+        btEnablebeacon.setBackgroundColor(Color.parseColor("#4caf50"));
+        btEnablebeacon.setTextColor(Color.parseColor("#FFFFFF"));
+
+        btDisablebeacon.setBackgroundColor(Color.parseColor("#f44336"));
+        btDisablebeacon.setTextColor(Color.parseColor("#FFFFFF"));
+
+
+        //initialize TailDMP SDK
+        initApp();
+    }
+
+
+
+    /****************************
+     *
+     * Initializing Tal DMP SDK
+     *
+     ***************************/
+    private void initApp(){
+
+        //initializing TailDMP
+
+        try {
+            TailDMP.initialize(getApplicationContext());
+            //set user as optin
+            TailDMP.getInstance().setOptin(true);
+
+
+        } catch (TailDMPException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    /****************************
+     *
+     * Initializing Beacons tracking
+     *
+     ***************************/
+    public void initBeacons(View view){
+
+        //just initialize if we have location permission granted
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            //init beacons tracking
+            try {
+
+                //generate user hash
+                TailDMP.getInstance().generateUserHashFromEmail(txt_email.getText().toString());
+                <b>
+                //enable beacon tracking
+                TailDMP.getInstance().enableBeaconScan(this);
+                </b>
+
+                /****************************************************************************
+                 *
+                 * Don't forget to start the service to automatically collect and send data
+                 * or it will never be sent to be processed by us.
+                 *
+                *****************************************************************************/
+                //collect and send data
+                startSendDataService();
+
+            } catch (TailDMPException e) {
+                e.printStackTrace();
+            }
+        }else{
+            //ask permission
+
+            View v = findViewById(android.R.id.content);
+            checkPermission(v);
+        }
+    }
+
+
+    /****************************
+     *
+     * Stops Beacons tracking
+     *
+     ***************************/
+    public void disableBeacons(View v){
+
+        try {
+            //stops tracking beacons
+            TailDMP.getInstance().disableBeaconScan();
+
+
+
+
+        } catch (TailDMPException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /****************************
+     *
+     * Stars automatic service that collect and send data
+     *
+     ***************************/
+    private void startSendDataService(){
+        try {
+            //every 15 minutes try to collect data
+            //every 480(8 hours) minutes try to send data to server
+            <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);
+            TailDMP.getInstance().startJob();</b>
+
+        } catch (TailDMPException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /****************************
+     *
+     * Stops automatic service that collect and send data
+     *
+     ***************************/
+    private void stopSendDataService(){
+        try {
+
+            TailDMP.getInstance().stopJob();
+
+        } catch (TailDMPException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    // =============================
+    // ==>> ASK PERMISSION TO USER
+    // =============================
+    //https://developer.android.com/training/permissions/requesting.html
+
+
+
+    /****************************
+     *
+     * Ask permission dialog for user interaction
+     *
+     ***************************/
+    public void checkPermission(View view){
+        //check if the user allow us to use some private resources of this device
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                ){
+            //Can add more as per requirement
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},PERMISSION_REQUEST_ID);
+        }
+    }
+
+
+    /****************************
+     *
+     * Handler of Dialog's action
+     *
+     ***************************/
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == PERMISSION_REQUEST_ID) {
+
+            int PERMISSION_GRANTED = -1;
+
+            //loop through all permissions requested
+            for(int i = 0; i<permissions.length; i++){
+
+                //found ACCESS_COARSE_LOCATION
+                if(permissions[i].equals("android.permission.ACCESS_COARSE_LOCATION")){
+                    PERMISSION_GRANTED = grantResults[i];
+                    break;
+                }
+
+            }
+
+            // Check if the required permission has been granted
+            if (PERMISSION_GRANTED == PackageManager.PERMISSION_GRANTED) {
+                <b>// access to locations device granted
+                //start beacon tracking
+                initBeacons(null);
+                </b>
+            } else {
+
+                Snackbar.make(this.findViewById(android.R.id.content), "You must grant permission to access device location if you want to use this feature!",
+                        Snackbar.LENGTH_LONG).show();
+
+            }
+
+        }else{
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+
+    }
+}
+
+
+</pre>
+
+
+
+
+<h2 id="sum-rio-de-classes">Sumário de Classes</h2>
 <h3 id="taildmp">TailDMP</h3>
 <blockquote>
 <p>Objeto de acesso central das funcionalidades do SDK
@@ -1219,12 +1562,13 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
   </tr>
  </thead>
  <tbody>
- <tr>
+
+  <tr>
    <td ><pre>enableSandbox(boolean enable); </pre></td>
    <td>
     <p>Habilita/Desabilita o modo Sandbox. </p>
     <p>Modo desabilitado Por padrão.</p>
-    <p>Quando Habilitado, os dados são enviados para um serviço que descriptografa e os exibe na área de Sandbox do Dashboard.</p>
+     <p>Quando Habilitado, os dados são enviados para um serviço que descriptografa e os exibe na área de Sandbox do Dashboard.</p>
     <p>Utilizado para verificar se a configuração do app está correta e os dados foram enviados para a TailTarget</p>
    </td>
   </tr>
@@ -1245,6 +1589,8 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
      <td ><pre>generateUserHashFromCPF(String CPF); </pre></td>
      <td>
       <p>Gera um hash identificador utilizando o CPF, o valor deve conter apenas os 11 digitos</p>
+      <p>Ex. 111.111.111-11 =&gt; 11111111111</p>
+      <p>Reference: <a href="https://dashboard.tailtarget.com/dmp/#/docs/a10">https://dashboard.tailtarget.com/dmp/#/docs/a10</a></p>
      </td>
     </tr>
 
@@ -1252,8 +1598,12 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
        <td ><pre>generateUserHashFromPhone(String phonenumber); </pre></td>
        <td>
         <p>Gera um hash identificador utilizando um numero de telefone, o valor deve conter apenas digitos e o número de telefone deve ser o internacional sem os digitos de operadoras.</p>
+         <p>Ex. 11982235000 =&gt; 5511982235000
+8587719999 =&gt; 558587719999</p>
+       <p>Reference: <a href="https://dashboard.tailtarget.com/dmp/#/docs/a10">https://dashboard.tailtarget.com/dmp/#/docs/a10</a></p>
        </td>
       </tr>
+
 
   <tr>
    <td ><pre>addTags(Strig tag) </pre></td>
@@ -1301,8 +1651,38 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
         <p>true | false - Sinaliza ao SDK que o envio de dados será feito apenas se o usuário estiver conectado em uma rede wifi, o padrão é false.</p>
        </td>
       </tr><br>
+
+
+
+  <tr>
+   <td ><pre>getClientData() </pre></td>
+   <td>
+    <p>Usado para recuperar dados da conta, retorna um objeto do tipo <em>TAsyncGetClientData</em>.
+        Devemos definir um objeto para receber a resposta do servidor na propriedade delegate.
+        Para iniciar a ação de recuperação de dados utilizamos o método execute() do objeto.
+      Devemos extender a interface ITAsyncResponse em nosso app para receber os dados da conta</p>
+   </td>
+  </tr>
+
+<tr>
+   <td ><pre>enableBeaconScan(Activity act) </pre></td>
+   <td>
+    <p>
+        Habilitar o rastreamento e detecção de Beacons.
+    </p>
+   </td>
+  </tr>
+<tr>
+   <td ><pre>disableBeaconScan() </pre></td>
+   <td>
+    <p>
+        Desliga o rastreamento de Beacons.
+    </p>
+   </td>
+  </tr>
+
+
  </tbody>
 </table>
-
 
 </article></body></html>
