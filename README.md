@@ -102,7 +102,7 @@ defaultConfig {
 
 For the correct operation of the SDK, we use google play service libraries. They must be compiled within the app. 
 
-We must add to our gradle dependencies these libs and our .aar file: 
+You must add these libs to your gradle dependencies file: 
 - play-services-identity:10.2.4
 - play-services-location:10.2.4
 
