@@ -1,4 +1,3 @@
-
 # TAILDMP SDK ANDROID
 
 > The TailDMP SDK is a mobile data library used to send and collect data from mobile devices, which will be used by TailTarget. The library provides an automatization mechanism for collecting and sending data, it’s just necessary define the periodicity between the sending’s requests.  
