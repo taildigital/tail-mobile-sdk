@@ -804,7 +804,7 @@ A biblioteca fornece um mecanismo de automatização de coleta e envio dos dados
 &lt;/manifest&gt;
 </code></pre><h4 id="adicionar-biblioteca-aar-no-projeto">Adicionar Biblioteca AAR no projeto</h4>
 <p>Nossa biblioteca é distribuida pelo mavencentral.</p>
-<p>A biblioteca do SDK já incorpora as seguintes bibliotecas em seu pacote:</p>
+<p>A biblioteca do SDK já incorpora a seguinte biblioteca em seu pacote:</p>
 <ul>
 <li>com.google.code.gson:gson:2.8.0</li>
 </ul>
@@ -831,7 +831,6 @@ Abaixo um exemplo de como ficaria a configuração do dependencies do arquivo <e
 <pre>
 dependencies {
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //import google play libs
     <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
@@ -1564,7 +1563,7 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
  <tbody>
 
   <tr>
-   <td ><pre>enableSandbox(boolean enable); </pre></td>
+   <td ><pre>enableSandbox(boolean enable) </pre></td>
    <td>
     <p>Habilita/Desabilita o modo Sandbox. </p>
     <p>Modo desabilitado Por padrão.</p>
@@ -1579,14 +1578,14 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
     <p>Recupera a instancia do TailDMP inicializada</p>
    </td>
   </tr><br>  <tr>
-   <td ><pre>generateUserHashFromEmail(String useremail); </pre></td>
+   <td ><pre>generateUserHashFromEmail(String useremail) </pre></td>
    <td>
     <p>Gera um hash identificador do usuário utilizando um email. O valor deve estar em caixa baixa e ser um endereço válido.</p>
    </td>
   </tr>
 
   <tr>
-     <td ><pre>generateUserHashFromCPF(String CPF); </pre></td>
+     <td ><pre>generateUserHashFromCPF(String CPF) </pre></td>
      <td>
       <p>Gera um hash identificador utilizando o CPF, o valor deve conter apenas os 11 digitos</p>
       <p>Ex. 111.111.111-11 =&gt; 11111111111</p>
@@ -1595,7 +1594,7 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
     </tr>
 
   <tr>
-       <td ><pre>generateUserHashFromPhone(String phonenumber); </pre></td>
+       <td ><pre>generateUserHashFromPhone(String phonenumber) </pre></td>
        <td>
         <p>Gera um hash identificador utilizando um numero de telefone, o valor deve conter apenas digitos e o número de telefone deve ser o internacional sem os digitos de operadoras.</p>
          <p>Ex. 11982235000 =&gt; 5511982235000
@@ -1646,15 +1645,13 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
      </td>
     </tr><br>
   <tr>
-   <td ><pre>setSendDataOnWifiOnly(boolean); </pre></td>
+   <td ><pre>setSendDataOnWifiOnly(boolean) </pre></td>
        <td>
         <p>true | false - Sinaliza ao SDK que o envio de dados será feito apenas se o usuário estiver conectado em uma rede wifi, o padrão é false.</p>
        </td>
       </tr><br>
 
 
-
-  
 
 <tr>
    <td ><pre>enableBeaconScan(Activity act) </pre></td>
