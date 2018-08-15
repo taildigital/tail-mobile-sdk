@@ -1567,7 +1567,7 @@ Mandatory.
  </thead>
  <tbody>
   <tr>
-   <td ><pre>enableSandbox(boolean enable); </pre></td>
+   <td ><pre>enableSandbox(boolean enable) </pre></td>
    <td>
     <p>Enabel/Disable the Sandbox mode. </p>
     <p>The sandbox mode is disabled by default.</p>
@@ -1586,14 +1586,14 @@ Mandatory.
     <p>Retrieves the initialized TailDMP instance</p>
    </td>
   </tr><br>  <tr>
-   <td ><pre>generateUserHashFromEmail(String useremail); </pre></td>
+   <td ><pre>generateUserHashFromEmail(String useremail) </pre></td>
    <td>
     <p>Generate a hashuser by its email. Must be a lowercase String and a valid email address.</p>
    </td>
   </tr>
 
   <tr>
-     <td ><pre>generateUserHashFromCPF(String CPF); </pre></td>
+     <td ><pre>generateUserHashFromCPF(String CPF) </pre></td>
      <td>
       <p>Generates a hash user by its CPF, Must contents only 11 digits of this document.</p>
       <p>Ex. 111.111.111-11 =&gt; 11111111111</p>
@@ -1602,7 +1602,7 @@ Mandatory.
     </tr>
 
   <tr>
-       <td ><pre>generateUserHashFromPhone(String phonenumber); </pre></td>
+       <td ><pre>generateUserHashFromPhone(String phonenumber) </pre></td>
        <td>
         <p>Generates a hash user by its phonenumber, phone field, should use only the numbers of its full international form. Note that should be no international carrier codes in the phone&#39;s shape.</p>
         <p>Ex. 11982235000 =&gt; 5511982235000
@@ -1656,7 +1656,7 @@ by  setIntervalToExecuteJob(int minutesToCollect, int minutesToSend)</p>
      </td>
     </tr><br>
   <tr>
-   <td ><pre>setSendDataOnWifiOnly(boolean); </pre></td>
+   <td ><pre>setSendDataOnWifiOnly(boolean) </pre></td>
        <td>
         <p><b>(Optional)</b> true | false - Signals to the SDK that the sending of data will only be done if the device have data connection through Wifi network , default is false.</p>
        </td>
