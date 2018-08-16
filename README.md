@@ -120,7 +120,7 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
     <b>compile 'com.google.android.gms:play-services-location:10.2.4'</b>
     //get sdk from maven central
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.22'</b>
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
 
 
 }
@@ -162,7 +162,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     </b>
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.22'</b>
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
 
 
 }
@@ -621,7 +621,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.22'</b>
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
 }
 
 </pre>
