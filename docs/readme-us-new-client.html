@@ -841,7 +841,8 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
     <b>compile 'com.google.android.gms:play-services-location:10.2.4'</b>
     //get sdk from maven central
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 
 
 }
@@ -882,7 +883,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     </b>
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 
 
 }
@@ -1257,7 +1259,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 }
 
 </pre>
@@ -1267,15 +1270,12 @@ dependencies {
 
 
 <h4 id="enable-beacons-detection-in-your-app">Enable beacons detection in your App</h4>
-<p>Start the detection using the method <strong>TailDMP.getInstance().enableBeaconScan()</strong>.  </p>
-<p>Beacon&#39;s detection and scan will be initialized only if user gives  <a href="#permission">permission</a> to access  device&#39;s geolocation and the bluetooth of its device is activated.</p>
-<p>Every time we use enableBeaconScan(), the bluetooth of user&#39;s device is activated to allow us to search for beacons. </p>
-<p>Beacon&#39;s detection and scan are made when your App is in foreground and background state, this process runs in a separated thread in background, it doesn&#39;t blocks the UI thread and uses only <strong>Bluetooth Low Energy (BLE)</strong> to save device&#39;s battery.</p>
-<p>Please don&#39;t forget to enable the automatic scheduling mechanism to send the data collected to us.  </p>
-<ul>
-<li><strong>TailDMP.getInstance().setIntervalToExecuteJob(minutes2collectr,minutes2Send)</strong> defines periods to collect and send data. </li>
-<li><strong>TailDMP.getInstance().startJob()</strong> starts the process.</li>
-</ul>
+<p>Beacon&#39;s detection is enabled automatically using the method of SDK, <strong>TailDMP.getInstance().startJob()</strong>. </p>
+<p>You can start the detection manually using the SDK&#39;s method <strong>TailDMP.getInstance().enableBeaconScan()</strong>. 
+To stop the detection use the SDK&#39;s method <strong>TailDMP.getInstance().disableBeaconScan()</strong>.</p>
+<p>Beacon&#39;s detection and scan will be initialized only if user is opt in, gives  <a href="#permission">permission</a> to access  device&#39;s geolocation and the bluetooth of its device is activated.</p>
+<p>All beacon&#39;s information are saved inside app and are sent to Tail using SDK&#39;s service that sends and collects data automaticcally, so you <strong>must use the SDK on automatic mode</strong>.</p>
+<p>Beacon&#39;s detection and scan are executed when your App is in foreground and background state, this process runs in a separated thread in background, it doesn&#39;t blocks the UI thread and uses only <strong>Bluetooth Low Energy (BLE)</strong> to save device&#39;s battery.</p>
 <p>Below an example of enabling beacons detection, the workflow to ask permission to use geolocation data and enabling automatic scheduling mechanism to send and collect data:</p>
 <pre>
 package digital.tail.apptrackbeacons;
@@ -1378,7 +1378,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 //generate user hash
                 TailDMP.getInstance().generateUserHashFromEmail(txt_email.getText().toString());
                 <b>
-                //enable beacon tracking
+                //enable beacon tracking manually
                 TailDMP.getInstance().enableBeaconScan(this);
                 </b>
 
@@ -1433,8 +1433,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         try {
             //every 15 minutes try to collect data
             //every 480(8 hours) minutes try to send data to server
-            <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);
-            TailDMP.getInstance().startJob();</b>
+            <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);</b>
+            //initialize beacon tracking automatically
+            <b>TailDMP.getInstance().startJob();</b>
 
         } catch (TailDMPException e) {
             e.printStackTrace();

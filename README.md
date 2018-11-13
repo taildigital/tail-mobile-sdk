@@ -1,5 +1,4 @@
 
-
 # TAILDMP SDK ANDROID
 
 > The TailDMP SDK is a mobile data library used to send and collect data from mobile devices, which will be used by TailTarget. The library provides an automatization mechanism for collecting and sending data, it’s just necessary define the periodicity between the sending requests.  
@@ -102,7 +101,7 @@ defaultConfig {
 
 For the correct operation of the SDK, we use google play service libraries. They must be compiled within the app. 
 
-You must add these libs to your gradle dependencies file: 
+You must add these libs to your gradle dependencies: 
 - play-services-identity:10.2.4
 - play-services-location:10.2.4
 
@@ -120,7 +119,8 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
     <b>compile 'com.google.android.gms:play-services-location:10.2.4'</b>
     //get sdk from maven central
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 
 
 }
@@ -162,7 +162,8 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     </b>
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 
 
 }
@@ -621,7 +622,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 }
 
 </pre>
@@ -631,18 +633,19 @@ dependencies {
 
 
 #### Enable beacons detection in your App 
-Start the detection using the method **TailDMP.getInstance().enableBeaconScan()**.  
+Beacon's detection is enabled automatically using the method of SDK, **TailDMP.getInstance().startJob()**. 
+  
+You can start the detection manually using the SDK's method **TailDMP.getInstance().enableBeaconScan()**. 
+To stop the detection use the SDK's method **TailDMP.getInstance().disableBeaconScan()**.
 
-Beacon's detection and scan will be initialized only if user gives  <a href="#permission">permission</a> to access  device's geolocation and the bluetooth of its device is activated.
+Beacon's detection and scan will be initialized only if user is opt in, gives  <a href="#permission">permission</a> to access  device's geolocation and the bluetooth of its device is activated.
 
-Every time we use enableBeaconScan(), the bluetooth of user's device is activated to allow us to search for beacons. 
+All beacon's information are saved inside app and are sent to Tail using SDK's service that sends and collects data automaticcally, so you **must use the SDK on automatic mode**.
 
-Beacon's detection and scan are made when your App is in foreground and background state, this process runs in a separated thread in background, it doesn't blocks the UI thread and uses only **Bluetooth Low Energy (BLE)** to save device's battery.
- 
 
-Please don't forget to enable the automatic scheduling mechanism to send the data collected to us.  
-- **TailDMP.getInstance().setIntervalToExecuteJob(minutes2collectr,minutes2Send)** defines periods to collect and send data. 
-- **TailDMP.getInstance().startJob()** starts the process.
+Beacon's detection and scan are executed when your App is in foreground and background state, this process runs in a separated thread in background, it doesn't blocks the UI thread and uses only **Bluetooth Low Energy (BLE)** to save device's battery.
+
+
 
 Below an example of enabling beacons detection, the workflow to ask permission to use geolocation data and enabling automatic scheduling mechanism to send and collect data:
 
@@ -748,7 +751,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 //generate user hash
                 TailDMP.getInstance().generateUserHashFromEmail(txt_email.getText().toString());
                 <b>
-                //enable beacon tracking
+                //enable beacon tracking manually
                 TailDMP.getInstance().enableBeaconScan(this);
                 </b>
 
@@ -803,8 +806,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         try {
             //every 15 minutes try to collect data
             //every 480(8 hours) minutes try to send data to server
-            <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);
-            TailDMP.getInstance().startJob();</b>
+            <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);</b>
+            //initialize beacon tracking automatically
+            <b>TailDMP.getInstance().startJob();</b>
 
         } catch (TailDMPException e) {
             e.printStackTrace();
@@ -939,7 +943,7 @@ Mandatory.
  </thead>
  <tbody>
   <tr>
-   <td ><pre>enableSandbox(boolean enable); </pre></td>
+   <td ><pre>enableSandbox(boolean enable) </pre></td>
    <td>
     <p>Enabel/Disable the Sandbox mode. </p>
     <p>The sandbox mode is disabled by default.</p>
@@ -960,14 +964,14 @@ Mandatory.
    </td>
   </tr>  
   <tr>
-   <td ><pre>generateUserHashFromEmail(String useremail); </pre></td>
+   <td ><pre>generateUserHashFromEmail(String useremail) </pre></td>
    <td>
     <p>Generate a hashuser by its email. Must be a lowercase String and a valid email address.</p>
    </td>
   </tr>
   
   <tr>
-     <td ><pre>generateUserHashFromCPF(String CPF); </pre></td>
+     <td ><pre>generateUserHashFromCPF(String CPF) </pre></td>
      <td>
       <p>Generates a hash user by its CPF, Must contents only 11 digits of this document.</p>
       <p>Ex. 111.111.111-11 => 11111111111</p>
@@ -976,7 +980,7 @@ Mandatory.
     </tr>
   
   <tr>
-       <td ><pre>generateUserHashFromPhone(String phonenumber); </pre></td>
+       <td ><pre>generateUserHashFromPhone(String phonenumber) </pre></td>
        <td>
         <p>Generates a hash user by its phonenumber, phone field, should use only the numbers of its full international form. Note that should be no international carrier codes in the phone's shape.</p>
         <p>Ex. 11982235000 => 5511982235000
@@ -1032,7 +1036,7 @@ by  setIntervalToExecuteJob(int minutesToCollect, int minutesToSend)</p>
     </tr>  
   
   <tr>
-   <td ><pre>setSendDataOnWifiOnly(boolean); </pre></td>
+   <td ><pre>setSendDataOnWifiOnly(boolean) </pre></td>
        <td>
         <p><b>(Optional)</b> true | false - Signals to the SDK that the sending of data will only be done if the device have data connection through Wifi network , default is false.</p>
        </td>
