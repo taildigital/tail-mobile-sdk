@@ -836,7 +836,8 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
     <b>compile 'com.google.android.gms:play-services-location:10.2.4'</b>
     //get sdk from maven central
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 
 }
 </pre>
@@ -874,7 +875,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 
 }
 </pre>
@@ -1190,7 +1192,7 @@ Ex: CFB3DBE6A3E1B065C4BB112233445566
 </pre>
 
 <p>Utilizamos a biblioteca &quot;Nearby&quot; do Google para controlar o processo de procura por beacons no dispositivo do usuário. Para o correto funcionamento, o serviço geolocalização deve estar habilitado pelo usuário.</p>
-<p>A procura por beacons é iniciada nos eventos ON/OFF de tela do Android. </p>
+<p>A procura por beacons é iniciada nos eventos <em>ON/OFF</em> de tela do Android. </p>
 <p>A detecção dos Beacons <strong>depende do bluetooth estar ativo</strong> aconselhamos que na sua estratégia de construção do App inclua mecanismos que estimulem o usuário a mantê-lo ligado.</p>
 <p>É necessário nos enviar todos os InstanceIds criados para podermos registra-los e fazer o rastreamento correto pelo SDK.</p>
 <h2 id="configurar-o-sdk-para-detectar-beacons">Configurar o SDK para detectar beacons</h2>
@@ -1255,7 +1257,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //add and extract the sdk from mavencentral
-    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.23'</b>
+    //change 1.2.+ to the latest version available
+    <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
 }
 
 </pre>
@@ -1265,15 +1268,11 @@ dependencies {
 
 
 <h4 id="habilitar-rastreamento-de-beacons-no-app">Habilitar rastreamento de beacons no App</h4>
-<p>Para iniciar a procura por beacons utilizamos o método <strong>TailDMP.getInstance().enableBeaconScan()</strong>.  </p>
-<p>A detecção só acontecerá caso o usuário dê <a href="#permission">permissão</a> para acesso à geolocalização e o bluetooth do dispositivo esteja ativo.</p>
-<p>Toda vez que utilizamos este método, o bluetooth do dispositivo é ligado para permitir a busca por beacons.</p>
+<p>O rastreamento de beacons é habilitado automáticamente ao utilizar o método de coleta e envio de dados automático <strong>TailDMP.getInstance().startJob()</strong> ou utilizando o método manual <strong>TailDMP.getInstance().enableBeaconScan()</strong>. </p>
+<p>A detecção só acontece caso o usuário seja optin, dê <a href="#permission">permissão</a> para acesso à geolocalização e o bluetooth do dispositivo esteja ativo. </p>
+<p>Todos os dados coletados dos beacons são salvos no app e só são enviados para Tail através do serviço de coleta e envio de dados automático, portanto <strong>você deve &quot;rodar&quot; o SDK no modo automático</strong>.</p>
 <p>A busca por beacons acontece quando o App está nos estados de foreground e background, o processo roda em uma thread em background, não bloqueia a interface do usuário e utiliza apenas <strong>Bluetooth Low Energy (BLE)</strong> para preservar a carga de bateria. </p>
-<p>Não esqueça de habilitar o envio automático de dados utilizando os métodos  </p>
-<ul>
-<li><strong>TailDMP.getInstance().setIntervalToExecuteJob(minutosPcoletar,minutosPEnviar)</strong> para definir o período de coleta e envio de dados. </li>
-<li><strong>TailDMP.getInstance().startJob()</strong> para iniciar o processo.</li>
-</ul>
+<p><strong>Não esqueça de habilitar o envio automático ou não receberemos os dados sobre os beacons.</strong> </p>
 <p>Abaixo segue um exemplo de como habilitar o rastreamento de beacons, do workkflow para pedir permissão de uso de dados de geolocalização e iniciar o processo automático de coleta e envio de dados:</p>
 <pre>
 package digital.tail.apptrackbeacons;
@@ -1376,7 +1375,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 //generate user hash
                 TailDMP.getInstance().generateUserHashFromEmail(txt_email.getText().toString());
                 <b>
-                //enable beacon tracking
+                //enable beacon tracking manually
                 TailDMP.getInstance().enableBeaconScan(this);
                 </b>
 
@@ -1431,8 +1430,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         try {
             //every 15 minutes try to collect data
             //every 480(8 hours) minutes try to send data to server
-            <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);
-            TailDMP.getInstance().startJob();</b>
+           <b>TailDMP.getInstance().setIntervalToExecuteJob(15,480);</b>
+            //initialize beacon tracking automatically
+            <b>TailDMP.getInstance().startJob();</b>
 
         } catch (TailDMPException e) {
             e.printStackTrace();
