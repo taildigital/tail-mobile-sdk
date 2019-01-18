@@ -102,8 +102,9 @@ defaultConfig {
 For the correct operation of the SDK, we use google play service libraries. They must be compiled within the app. 
 
 You must add these libs to your gradle dependencies: 
-- play-services-identity:10.2.4
-- play-services-location:10.2.4
+- play-services-identity:16.0.0
+- play-services-location:16.0.0
+- play-services-ads: 16.0.0
 
 
 Below is an example of how the dependency configuration of the *gradle.build* file should be:
@@ -116,8 +117,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //import google play libs
-    <b>compile 'com.google.android.gms:play-services-identity:10.2.4'</b>
-    <b>compile 'com.google.android.gms:play-services-location:10.2.4'</b>
+    <b>compile 'com.google.android.gms:play-services-identity:16.0.0'</b>
+    <b>compile 'com.google.android.gms:play-services-location:16.0.0'</b>
+    <b>compile 'com.google.android.gms:play-services-ads:16.0.0'</b>
     //get sdk from maven central
     //change 1.2.+ to the latest version available
     <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
@@ -156,8 +158,9 @@ android {
 dependencies {
        //import google play libs
     <b>
-    compile 'com.google.android.gms:play-services-identity:10.2.4'
-    compile 'com.google.android.gms:play-services-location:10.2.4'
+    compile 'com.google.android.gms:play-services-identity:16.0.0'
+    compile 'com.google.android.gms:play-services-location:16.0.0'
+    compile 'com.google.android.gms:play-services-ads:16.0.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     </b>
@@ -614,9 +617,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     
     //import google play libs
-    compile 'com.google.android.gms:play-services-identity:11.0.4'
-    <b>compile 'com.google.android.gms:play-services-location:11.0.4'
-    compile 'com.google.android.gms:play-services-nearby:11.0.4'
+    <b>compile 'com.google.android.gms:play-services-identity:16.0.0'
+    compile 'com.google.android.gms:play-services-location:16.0.0'
+    compile 'com.google.android.gms:play-services-nearby:16.0.0'
+    compile 'com.google.android.gms:play-services-ads:16.0.0'
     </b>
 
     compile 'com.android.support:appcompat-v7:25.3.1'
