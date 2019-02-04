@@ -825,7 +825,7 @@ defaultConfig {
 
 
 <p>Para o correto funcionamento do SDK utilizamos bibliotecas do google play service, elas devem ser compiladas junto ao aplicativo.
-Devemos adicionar as bibliotecas play-services-identity, play-services-location, play-services-ads e incorporar o SDk como dependências do <em>gradle.build</em>.
+Devemos adicionar as bibliotecas play-services-identity,play-services-nearby, play-services-location, play-services-ads e incorporar o SDk como dependências do <em>gradle.build</em>.
 Abaixo um exemplo de como ficaria a configuração do dependencies do arquivo <em>gradle.build</em>.</p>
 <p>Ex.</p>
 <pre>
@@ -836,6 +836,7 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-location:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-ads:16.0.0'</b>
+    <b>compile 'com.google.android.gms:play-services-nearby:16.0.0'</b>
     //get sdk from maven central
     //change 1.2.+ to the latest version available
     <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
@@ -874,6 +875,7 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:16.0.0'
     compile 'com.google.android.gms:play-services-location:16.0.0'
     compile 'com.google.android.gms:play-services-ads:16.0.0'
+    compile 'com.google.android.gms:play-services-nearby:16.0.0'
     </b>
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
