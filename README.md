@@ -105,6 +105,7 @@ You must add these libs to your gradle dependencies:
 - play-services-identity:16.0.0
 - play-services-location:16.0.0
 - play-services-ads: 16.0.0
+- play-services-nearby:16.0.0
 
 
 Below is an example of how the dependency configuration of the *gradle.build* file should be:
@@ -120,6 +121,7 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-location:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-ads:16.0.0'</b>
+    <b>compile 'com.google.android.gms:play-services-nearby:16.0.0'</b>
     //get sdk from maven central
     //change 1.2.+ to the latest version available
     <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
@@ -161,6 +163,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-identity:16.0.0'
     compile 'com.google.android.gms:play-services-location:16.0.0'
     compile 'com.google.android.gms:play-services-ads:16.0.0'
+    compile 'com.google.android.gms:play-services-nearby:16.0.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     </b>
