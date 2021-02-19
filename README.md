@@ -912,15 +912,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 ## Events
 
-### Save Events 
-
 Events are key / value data that can be saved when an in-app action occurs. ex: User clicked to buy a product, User cancel a purchase, etc.
 
 Users must be opt in to its data be saved. The maximum number of saved events is **400**. 
 
-After reaching the maximum value of events start to  delete the oldest record to insert a new one. 
+After reaching the maximum value of events we start to  delete the oldest record to insert a new one. 
 
 **Its up to the developer to trigger the operation of sending saved event data.**
+
+### Save Events 
 
 To save events call the method **addEvent(eventKey,eventValue)**.
 
@@ -968,7 +968,7 @@ In this case, an action of developer is required to schedule a new upload attemp
 #### Uploading Events with callback
 Uploading events data is an asynchronous operation, we receive a response of it after this operation has completed.
 
-To listen to this response we must a callback method that is executed after this operation is completed.
+To listen to this response we must use a callback method that is executed after this operation is completed.
 
 Tail SDK already has an implementation for this purpose.  
 The developer must implements in your Activity the method 
@@ -1030,7 +1030,7 @@ public class MainActivity extends AppCompatActivity <b>implements ITSendEvents</
 The use of the callback is not mandatory, if you don't need it, pass null to the sendEvents method ex: sendEvents (null)
 
 
-Exemplo:
+Ex:
 <pre>
 
     public void clickSendAllEvents(View view){
