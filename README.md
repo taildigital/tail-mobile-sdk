@@ -910,6 +910,148 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 </pre>
 
+## Events
+
+### Save Events 
+
+Events are key / value data that can be saved when an in-app action occurs. ex: User clicked to buy a product, User cancel a purchase, etc.
+
+Users must be opt in to its data be saved. The maximum number of saved events is **400**. 
+
+After reaching the maximum value of events start to  delete the oldest record to insert a new one. 
+
+**Its up to the developer to trigger the operation of sending saved event data.**
+
+To save events call the method **addEvent(eventKey,eventValue)**.
+
+The value of **eventKey** must be a String up to 32 characters, cannot be null, cannot be empty and can contain _=.-
+
+The value of **eventValue** must be a String up to 100 characters, cannot be null, cannot be empty and can contain _=.-
+
+Ex:
+<pre>
+
+
+    //user clicks and we add an event to be saved
+    public void clickAddEvent (View view) {
+        //adding event
+        try{
+           <b> TailDMP.getInstance().addEvent("_viewProduct", "sku_1");</b>
+        }catch(Exception e){
+            Log.e("ERROR", "Exception");
+        }
+    }
+</pre>
+
+
+### Upload Events 
+The operation of uploading events to TailTarget is initiated by calling the method  **sendEvents**.
+
+This method returns true if the operation has successfully started or false if a failure has occurred.
+
+You can only perform one upload operation at a time, 
+if a sequence of calls is needed you must implement a callback
+to handle responses of one call and initiate the next one. 
+ 
+During the operation of uploading events, requests are executed to our servers transmitting all data saved.
+
+If all requests are successfully completed the value true is returned to callback, else the value false is returned.
+
+If a callback has not been defined, nothing is returned. 
+
+The data sent is deleted from the app with each successful submission request. 
+
+If any request was not completed, the data that was being sent by it will be kept in the app.
+
+In this case, an action of developer is required to schedule a new upload attempt
+
+#### Uploading Events with callback
+Uploading events data is an asynchronous operation, we receive a response of it after this operation has completed.
+
+To listen to this response we must a callback method that is executed after this operation is completed.
+
+Tail SDK already has an implementation for this purpose.  
+The developer must implements in your Activity the method 
+**sendEventsResults(boolean data)** of SDK's interface 
+**ITSendEvents** .
+
+The SDK will use this interface as callback and will return **true** if the request was successfully completed or **false** to any failure. 
+
+
+
+Ex:
+<pre>
+public class MainActivity extends AppCompatActivity <b>implements ITSendEvents</b> {
+
+    //user clicks to send events
+    public void clickSendAllEvents(View view){
+        try{
+
+           /* 
+            Sending all saved events to tailtarget server.
+            We had implemented on this Activity the method sendEventsResults() from ITSendEvents 
+            and then passed "this" as callback on sendEvents(this).
+            */
+            boolean sendEventsOperation = <b>TailDMP.getInstance().sendEvents(this)</b>;
+
+            if(sendEventsOperation){
+                Log.i("OK", "Operation Initialized!");
+            }else{
+                Log.e("ERROR", "Operation NOT Initialized!");
+                // do some task to handle this.
+            }
+        }catch (Exception e){
+            Log.e("ERROR", "Exception");
+        }
+    }
+
+
+    //user clicks and we add an event to be saved
+    public void clickAddEvent (View view) {
+        
+        try{
+
+            TailDMP.getInstance().addEvent("_viewProduct", "sku_1");
+        }catch(Exception e){
+            Log.e("ERROR", "Exception");
+        }
+
+    }
+
+    //callback method
+    @Override
+    public void sendEventsResults(boolean b) {
+        Log.i("TAIL-TAG", "Response from sendEvents"+b);
+    }
+}
+</pre>
+
+#### Upload Events without callback
+The use of the callback is not mandatory, if you don't need it, pass null to the sendEvents method ex: sendEvents (null)
+
+
+Exemplo:
+<pre>
+
+    public void clickSendAllEvents(View view){
+        try{
+
+           /* 
+            Sending all saved events to tailtarget server without callback.
+            */
+            boolean sendEventsOperation = <b>TailDMP.getInstance().sendEvents(null);</b>
+
+            if(sendEventsOperation){
+                Log.i("OK", "Operation Initialized!");
+            }else{
+                Log.e("ERROR", "Operation NOT Initialized!");
+                // do some task to handle this.
+            }
+        }catch (Exception e){
+            Log.e("ERROR", "Exception");
+        }
+    }
+</pre> 
 
 
 
@@ -995,7 +1137,14 @@ Mandatory.
        <p>Reference: https://dashboard.tailtarget.com/dmp/#/docs/a10</p>
        </td>
       </tr>
-  
+  <tr>
+   <td ><pre>addEvent(String eventKey, String eventValue) </pre></td>
+   <td>
+    <p>Saves key / value data on app.</p>
+    <p><b>eventKey</b> - must be a String up to 32 characters, cannot be null, cannot be empty and can contain _=.-</p>
+<p><b>eventValue</b> must be a String up to 100 characters, cannot be null, cannot be empty and can contain _=.-</p>
+   </td>
+  </tr>  
   <tr>
    <td ><pre>addTags(Strig tag) </pre></td>
    <td>
@@ -1008,6 +1157,14 @@ Mandatory.
    <td>
     <p>Sends device data without automatic JobService </p>
     <p><b>tag</b> - String and can not exceed 32 characters, <b>can</b> be an empty string, can have letters, numbers or the following special characters: **-  _  .  =** </p>
+   </td>
+  </tr>
+  <tr>
+   <td ><pre>sendEvents(ITSendEvents listener) </pre></td>
+   <td>
+    <p>Operation that upload events data</p>
+    <p>Returns true if the operation has successfully started or false if a failure has occurred.</p>
+    <p><b>listener</b> Object with the implementation of callback of interface ITSendEvents. It will return true if the request was successfully completed or false to any failure.</p><p>The use of the callback is not mandatory, if you don't need it, pass null to the sendEvents method ex: sendEvents (null)</p>
    </td>
   </tr>
   <tr>

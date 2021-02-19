@@ -1533,6 +1533,116 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 </pre>
 
+<h2 id="eventos">Eventos</h2>
+<h3 id="salvar-eventos">Salvar Eventos</h3>
+<p>Eventos são dados do tipo chave/valor que podem ser salvos conforme alguma ação no app acontece. ex: Usuário clicou em comprar um produto, Usuário cancelou uma compra, etc.</p>
+<p>Para o evento ser adicionado o usuário deve ser optin. O número máximo de eventos salvos é de <strong>400</strong>. 
+Eventos são &quot;rotacionados&quot; após atingir o valor máximo, excluímos o registro mais antigo para inserir o mais recente. </p>
+<p><strong>Cabe ao desenvolvedor acionar a operação de envio dos dados de eventos salvos.</strong></p>
+<p>Para salvar eventos ao sdk utilizamos o método <strong>addEvent(eventKey,eventValue)</strong>.</p>
+<p>O valor de <strong>eventKey</strong> deve ser uma String de até 32 caracteres, não pode ser nulo, não pode ser vazio, pode conter _=.-</p>
+<p>O valor de <strong>eventValue</strong> deve ser uma String de até 100 caracteres, não pode ser nulo, não pode ser vazio, pode conter _=.-</p>
+<p>Ex:</p>
+<pre>
+
+
+    //user clicks and we add an event to be saved
+    public void clickAddEvent (View view) {
+        //adding event
+        try{
+           <b> TailDMP.getInstance().addEvent("_viewProduct", "sku_1");</b>
+        }catch(Exception e){
+            Log.e("ERROR", "Exception");
+        }
+    }
+</pre>
+
+
+<h3 id="enviar-eventos">Enviar Eventos</h3>
+<p>A operação de envio de eventos para TailTarget acontece através da chamada do método <strong>sendEvents</strong>.
+Este método retorna true caso a operação tenha iniciado com sucesso ou false caso uma falha tenha ocorrido.</p>
+<p>Só é possível executar uma operação de envio por vez, para iniciar mais de uma é necessário implementar um callback e após a resposta do mesmo fazer uma nova chamada de execução. </p>
+<p>Durante a operação de envio de dados de eventos são executadas requisições aos nossos servidores com os dados de eventos salvos. Caso todas as requisições sejam concluídas com sucesso é retornado ao callback o valor true caso alguma tenha falhado retornamos false. Se um callback não foi definido nada é retornado.</p>
+<p>Os dados enviados são apagados do app a cada requisição de envio com sucesso. </p>
+<p>Se alguma requisição não foi completada com sucesso, os dados que estavam sendo enviados por ela serão mantidos no app. 
+Uma ação do desenvolvedor é requerida para tratar este comportamento e agendar uma nova tentativa de envio.</p>
+<h4 id="enviar-eventos-com-callback">Enviar Eventos com callback</h4>
+<p>Como o envio de dados é uma operação assíncrona, só é possível receber resposta da operação após sua conclusão. </p>
+<p>Para isso é necessário utilizar um método de callback que é executado após a conclusão da operação.</p>
+<p>O SDK já possui uma implementação para este fim, o desenvolvedor deve implementar em sua Activiy o método <strong>sendEventsResults(boolean data)</strong> da interface do SDK <strong>ITSendEvents</strong> . O SDK usará esta interface como callback e retornará <strong>true</strong> se o envio ocorreu com sucesso ou <strong>false</strong> se existiu alguma falha.</p>
+<p>Ex:</p>
+<pre>
+public class MainActivity extends AppCompatActivity <b>implements ITSendEvents</b> {
+
+    //user clicks to send events
+    public void clickSendAllEvents(View view){
+        try{
+
+           /* 
+            Sending all saved events to tailtarget server.
+            We had implemented on this Activity the method sendEventsResults() from ITSendEvents 
+            and then passed "this" as callback on sendEvents(this).
+            */
+            boolean sendEventsOperation = <b>TailDMP.getInstance().sendEvents(this)</b>;
+
+            if(sendEventsOperation){
+                Log.i("OK", "Operation Initialized!");
+            }else{
+                Log.e("ERROR", "Operation NOT Initialized!");
+                // do some task to handle this.
+            }
+        }catch (Exception e){
+            Log.e("ERROR", "Exception");
+        }
+    }
+
+
+    //user clicks and we add an event to be saved
+    public void clickAddEvent (View view) {
+
+        try{
+
+            TailDMP.getInstance().addEvent("_viewProduct", "sku_1");
+        }catch(Exception e){
+            Log.e("ERROR", "Exception");
+        }
+
+    }
+
+    //callback method
+    @Override
+    public void sendEventsResults(boolean b) {
+        Log.i("TAIL-TAG", "Response from sendEvents"+b);
+    }
+}
+</pre>
+
+<h4 id="enviar-eventos-sem-callback">Enviar Eventos sem callback</h4>
+<p>O uso do callback não é obrigatório, caso não for utilizá-lo passar null para o método sendEvents ex: sendEvents(null)</p>
+<p>Exemplo:</p>
+<pre>
+
+    public void clickSendAllEvents(View view){
+        try{
+
+           /* 
+            Sending all saved events to tailtarget server without callback.
+            */
+            boolean sendEventsOperation = <b>TailDMP.getInstance().sendEvents(null);</b>
+
+            if(sendEventsOperation){
+                Log.i("OK", "Operation Initialized!");
+            }else{
+                Log.e("ERROR", "Operation NOT Initialized!");
+                // do some task to handle this.
+            }
+        }catch (Exception e){
+            Log.e("ERROR", "Exception");
+        }
+    }
+</pre> 
+
+
 
 
 
@@ -1611,16 +1721,32 @@ Este objeto é um singleton e deve ser inicializado apenas uma vez passando o co
 
 
   <tr>
+   <td ><pre>addEvent(String eventKey, String eventValue) </pre></td>
+   <td>
+    <p>Adiciona eventos chave/valor no app.</p>
+    <p><b>eventKey</b> - String de até 32 caracteres, pode conter letras e dígitos, não pode ser nulo, não pode ser vazio, pode conter <em>=.-</p>
+<p><b>eventValue</b> String de até 100 caracteres, pode conter letras e dígitos, não pode ser nulo, não pode ser vazio, pode conter </em>=.-</p>
+   </td>
+  </tr><br>  <tr>
+  <tr>
    <td ><pre>addTags(Strig tag) </pre></td>
    <td>
     <p>Adiciona informações extra para enviar ao server</p>
-    <p><b>tag</b> - String de no máximo 32 caracteres, <b>não</b> pode ser vazia, pode conter letras, digitos e os caracteres: . - <em> = </p>
+    <p><b>tag</b> - String de no máximo 32 caracteres, <b>não</b> pode ser vazia, pode conter letras, dígitos e os caracteres: . - <em> = </p>
    </td>
   </tr><br>  <tr>
    <td ><pre>sendData(String tag) </pre></td>
    <td>
     <p>Envia dados do device sem o mecanismo de agendamento automático</p>
-    <p><b>tag</b> - String de no máximo 32 caracteres, pode ser vazia, pode conter letras, digitos e os caracteres: . - </em> = </p>
+    <p><b>tag</b> - String de no máximo 32 caracteres, pode ser vazia, pode conter letras, dígitos e os caracteres: . - </em> = </p>
+   </td>
+  </tr>
+  <tr>
+   <td ><pre>sendEvents(ITSendEvents listener) </pre></td>
+   <td>
+    <p>Operação de envio de dados de eventos</p>
+    <p>O método retorna true caso a operação foi iniciada com sucesso ou false no caso de falha</p>
+    <p><b>listener</b> Objeto com a implementação de callback da interface ITSendEvents. Retorna true se as requisições de envio foram concluídas com sucesso ou false se alguma falhou.</p><p>Caso não seja necessário o uso de callback passar null para o método ex: sendEvents(null)</p>
    </td>
   </tr>
   <tr>
