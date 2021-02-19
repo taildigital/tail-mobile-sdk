@@ -1534,11 +1534,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 </pre>
 
 <h2 id="eventos">Eventos</h2>
-<h3 id="salvar-eventos">Salvar Eventos</h3>
 <p>Eventos são dados do tipo chave/valor que podem ser salvos conforme alguma ação no app acontece. ex: Usuário clicou em comprar um produto, Usuário cancelou uma compra, etc.</p>
 <p>Para o evento ser adicionado o usuário deve ser optin. O número máximo de eventos salvos é de <strong>400</strong>. 
 Eventos são &quot;rotacionados&quot; após atingir o valor máximo, excluímos o registro mais antigo para inserir o mais recente. </p>
 <p><strong>Cabe ao desenvolvedor acionar a operação de envio dos dados de eventos salvos.</strong></p>
+<h3 id="salvar-eventos">Salvar Eventos</h3>
 <p>Para salvar eventos ao sdk utilizamos o método <strong>addEvent(eventKey,eventValue)</strong>.</p>
 <p>O valor de <strong>eventKey</strong> deve ser uma String de até 32 caracteres, não pode ser nulo, não pode ser vazio, pode conter _=.-</p>
 <p>O valor de <strong>eventValue</strong> deve ser uma String de até 100 caracteres, não pode ser nulo, não pode ser vazio, pode conter _=.-</p>
@@ -1619,7 +1619,7 @@ public class MainActivity extends AppCompatActivity <b>implements ITSendEvents</
 
 <h4 id="enviar-eventos-sem-callback">Enviar Eventos sem callback</h4>
 <p>O uso do callback não é obrigatório, caso não for utilizá-lo passar null para o método sendEvents ex: sendEvents(null)</p>
-<p>Exemplo:</p>
+<p>Ex:</p>
 <pre>
 
     public void clickSendAllEvents(View view){
