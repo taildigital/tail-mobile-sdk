@@ -760,7 +760,7 @@ pre{
 <pre><code>{
   &quot;accountId&quot;: &quot;TT-0000-0&quot;
 }
-</code></pre><h4 id="androidmanifest-permissions">AndroidManifest Permissions</h4>
+</code></pre><h4 id="androidmanifest-permissions-android-9-">AndroidManifest Permissions (android &lt;=9)</h4>
 <p>Add the following permissions to the  <em>AndroidManifest.xml</em></p>
 <pre><code>&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
 &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
@@ -768,12 +768,31 @@ pre{
 &lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
 &lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
 &lt;uses-permission android:name=&quot;com.google.android.gms.permission.ACTIVITY_RECOGNITION&quot; /&gt;
-</code></pre><p>Add services below within the tag application</p>
+</code></pre><h4 id="androidmanifest-permissions-android-10-">AndroidManifest Permissions (android &gt;=10)</h4>
+<p>In android versions &lt;= 9 it was only necessary to ask permission for the user once to use location for both foreground and background.</p>
+<p>Starting with version 10 of android, google has changed the way to request location permissions, for that it is necessary to use a permission flow in two steps, one for use in the foreground and tracking of activities and then for use of location in background.</p>
+<p>If you&#39;re using <strong>AndroidX</strong>, some permissions has its package changed, see bellow comments about <strong>android 10</strong> use.</p>
+<p>Add the following permissions to the  <em>AndroidManifest.xml</em></p>
+<pre><code>&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_FINE_LOCATION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
+ &lt;!-- ACCESS_BACKGROUND_LOCATION is required only when requesting background location access on
+  Android 10 (API level 29) and higher. --&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_BACKGROUND_LOCATION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
+ &lt;!-- ACTIVITY_RECOGNITION permission has its package changed 
+ on Android 10 (API level 29) and higher. --&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACTIVITY_RECOGNITION&quot; /&gt;&gt;
+</code></pre><p>TailDMP SDK uses background location service, but for your app get it on android &gt;=10 will need to grant access to foreground location service first.
+More details on how to implement it can be found at:
+<a href="https://developer.android.com/training/location/permissions#request-background-location">https://developer.android.com/training/location/permissions#request-background-location</a></p>
+<p>Add services below within the tag application</p>
 <pre><code>&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send Data Service&quot;/&gt;
 &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPCollectDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Collect Data Service&quot;/&gt;
 &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendALLDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send All Data Service&quot;/&gt;
 &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPActivityTrackerIntentService&quot; android:exported=&quot;false&quot; android:label=&quot;Tail DMP Activity Service&quot; /&gt;
-</code></pre><p>The file <em>AndroidManifest.xml</em> will look like this:</p>
+</code></pre><p>The file <em>AndroidManifest.xml</em> will look like this for (android &lt;=9):</p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
 &lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; package=&quot;tail.digital.app&quot; &gt;
     &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
@@ -782,6 +801,40 @@ pre{
     &lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
     &lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
     &lt;uses-permission android:name=&quot;com.google.android.gms.permission.ACTIVITY_RECOGNITION&quot; /&gt;
+    &lt;application
+        android:allowBackup=&quot;true&quot;
+        android:icon=&quot;@mipmap/ic_launcher&quot;
+        android:label=&quot;@string/app_name&quot;
+        android:roundIcon=&quot;@mipmap/ic_launcher_round&quot;
+        android:supportsRtl=&quot;true&quot;
+        android:theme=&quot;@style/AppTheme&quot; &gt;
+        &lt;activity android:name=&quot;.MainActivity&quot; &gt;
+            &lt;intent-filter&gt;
+                &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;
+                &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;
+            &lt;/intent-filter&gt;
+        &lt;/activity&gt;
+           &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send Data Service&quot;/&gt;
+        &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPCollectDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Collect Data Service&quot;/&gt;
+        &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendALLDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send All Data Service&quot;/&gt;
+        &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPActivityTrackerIntentService&quot; android:exported=&quot;false&quot; android:label=&quot;Tail DMP Activity Service&quot; /&gt;
+    &lt;/application&gt;
+&lt;/manifest&gt;
+</code></pre><p>Or like this for <strong>(android &gt;=10)</strong>:</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; package=&quot;tail.digital.app&quot; &gt;
+    &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_FINE_LOCATION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
+&lt;!-- Required only when requesting background location access on
+ Android 10 (API level 29) and higher. --&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_BACKGROUND_LOCATION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
+&lt;!-- ACTIVITY_RECOGNITION permission has its package changed 
+ on Android 10 (API level 29) and higher. --&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACTIVITY_RECOGNITION&quot; /&gt;
+
     &lt;application
         android:allowBackup=&quot;true&quot;
         android:icon=&quot;@mipmap/ic_launcher&quot;
@@ -829,7 +882,6 @@ defaultConfig {
 <ul>
 <li>play-services-identity:16.0.0</li>
 <li>play-services-location:16.0.0</li>
-<li>play-services-ads: 16.0.0</li>
 <li>play-services-nearby:16.0.0</li>
 </ul>
 <p>Below is an example of how the dependency configuration of the <em>gradle.build</em> file should be:</p>
@@ -842,7 +894,6 @@ dependencies {
     //import google play libs
     <b>compile 'com.google.android.gms:play-services-identity:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-location:16.0.0'</b>
-    <b>compile 'com.google.android.gms:play-services-ads:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-nearby:16.0.0'</b>
     //get sdk from maven central
     //change 1.2.+ to the latest version available
@@ -855,7 +906,7 @@ dependencies {
 
 
 
-<h4 id="bellow-there-is-an-example-of-how-gradle-build-file-should-be-">Bellow there is an example of how gradle.build file should be:</h4>
+<h4 id="bellow-there-is-an-example-of-how-gradle-build-file-should-be-for-android-9-">Bellow there is an example of how gradle.build file should be for android &lt;= 9:</h4>
 <p>Ex.</p>
 <pre>
 apply plugin: 'com.android.application'
@@ -883,7 +934,6 @@ dependencies {
     <b>
     compile 'com.google.android.gms:play-services-identity:16.0.0'
     compile 'com.google.android.gms:play-services-location:16.0.0'
-    compile 'com.google.android.gms:play-services-ads:16.0.0'
     compile 'com.google.android.gms:play-services-nearby:16.0.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -895,6 +945,64 @@ dependencies {
 
 }
 </pre>
+
+
+<h4 id="bellow-there-is-an-example-of-how-gradle-build-file-should-be-for-android-10-usando-lib-androidx">Bellow there is an example of how gradle.build file should be for android &gt;=10 usando lib AndroidX</h4>
+<p>Ex.</p>
+<pre>
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion <b>30</b>
+
+    defaultConfig {
+        applicationId "tail.digital.app"
+        minSdkVersion <b>29</b>
+        targetSdkVersion <b>30</b>
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    <b>
+    //playservices on androidx has some packages changed
+    implementation 'com.google.android.gms:play-services-identity:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
+
+    </b>
+
+    //get sdk from maven central
+    //change 1.2.+ to the latest version available
+    implementation 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'
+
+    //new androidx libs
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+</pre>
+
 
 <h2 id="updating-security-providers-of-google-play-services-in-android-4-x">Updating Security Providers of Google Play Services in Android 4.x</h2>
 <p>Older devices with Android version 4.x installed, may be using obsolete and insecure libraries to provide secure network comunication. In these cases, we suggest that your app ask users to update Google Play Services Providers to its latest version.</p>
@@ -1015,7 +1123,16 @@ TailDMP.getInstance().stopJob();
 <p>To recover the device’s geolocation it is necessary to request the user’s permission. 
 We can use the Helper provided by Android - ActivityCompat.requestPermissions to implement this workflow.
 We recommends that this action should be executed before the start of SDK, on initializing of your app for example.</p>
-<p>Ex.</p>
+<p>More details on how to implement it can be found at:
+<a href="https://developer.android.com/training/permissions/requesting">https://developer.android.com/training/permissions/requesting</a></p>
+<p>If user don&#39;t grant permission to use its location the SDK will not use it.</p>
+<p>Starting with version 10 of android, google has changed the way to request location permissions, for that it is necessary to use a permission flow in two steps, one for use in the foreground and tracking of activities and then for use of location in background.</p>
+<p><strong>Starting with  Android 11 the permissions granted by the user will be revoked by default if the app is not used for a few months. 
+In this case it is necessary to ask the user again to allow the use of his location or redirect the user to the configuration area where he can disable this behavior</strong></p>
+<p>TailDMP SDK uses background location service, but for your app get it on android &gt;=10 will need to grant access to foreground location service at first.
+More details on how to implement it can be found at:
+<a href="https://developer.android.com/training/location/permissions#request-background-location">https://developer.android.com/training/location/permissions#request-background-location</a></p>
+<p>Ex.  <strong>(android &lt;=9)</strong></p>
 <pre>
 package tail.digital.app;
 
@@ -1103,7 +1220,72 @@ public class MainActivity extends AppCompatActivity {
 }
 </pre>        
 
-<p>Reference: <a href="https://developer.android.com/training/permissions/requesting.html?hl=pt-br">https://developer.android.com/training/permissions/requesting.html?hl=pt-br</a></p>
+<p>Reference: <a href="https://developer.android.com/training/permissions/requesting.html">https://developer.android.com/training/permissions/requesting.html</a></p>
+<p>Ex. Asking location permission flux in 2 steps <strong>(android &gt;=10)</strong> .</p>
+<pre>
+
+
+public class MainActivity extends AppCompatActivity {
+
+    private  final int PERMISSION_REQUEST_ID = 123;
+    private  final int PERMISSION_REQUEST_ID_BG = 456;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        <b>//ask user to grant permissions
+        askPermission()</b>
+    }
+
+    public void <b>askPermission()</b>{
+    //We can add more than one  per requirement
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACTIVITY_RECOGNITION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},PERMISSION_REQUEST_ID);
+    }
+
+    public void <b>askPermissionBG()</b>{
+        //We can add more than one  per requirement
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION},PERMISSION_REQUEST_ID_BG);
+    }
+
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+
+    if(requestCode == PERMISSION_REQUEST_ID || requestCode == PERMISSION_REQUEST_ID_BG) {
+
+        boolean foregroundLocAccess = false;
+        boolean backgroundLocAccess = false;
+
+        for(int i = 0; i < permissions.length; i++){
+            if(permissions[i].equals("android.permission.ACCESS_COARSE_LOCATION")){
+                foregroundLocAccess = true;
+            }else if(permissions[i].equals("android.permission.ACCESS_BACKGROUND_LOCATION")){
+                backgroundLocAccess = true;
+            }
+        }
+
+        if(foregroundLocAccess){
+            //permission foreground location granted, so ask for background location
+            if(!backgroundLocAccess){
+                <b>askPermissionBG()</b>;
+            }
+        }else{
+            //permission foreground location denied, handle this case and ask again later
+        }
+    }
+
+}    
+
+}
+
+
+
+
+</pre>
+
+
 <h4 id="sending-data-without-automatic-scheduling">Sending Data Without Automatic Scheduling</h4>
 <p>We can use the SDK to collect and send data of devices without the scheduling mechanism. </p>
 <p><strong>We suggest the use of this method for all devices with Android 4 version installed</strong>. </p>
@@ -1206,8 +1388,8 @@ protocol that broadcasts an unique message identifier for each beacon.</p>
 <h2 id="configure-sdk-to-detect-beacons">Configure SDK to detect beacons</h2>
 <h3 id="required-settings">Required Settings</h3>
 <h4 id="androidmanifest-permission">AndroidManifest Permission</h4>
-<p>Add the following permissions to the AndroidManifest.xml</p>
-<pre><code> &lt;uses-permission android:name=&quot;android.permission.ACCESS_FINE_LOCATION&quot; /&gt;
+<p>Add the following permissions to the AndroidManifest.xml for <strong>android &lt;= 9</strong></p>
+<pre><code>&lt;uses-permission android:name=&quot;android.permission.ACCESS_FINE_LOCATION&quot; /&gt;
 &lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
 
 &lt;uses-permission android:name=&#39;android.permission.BLUETOOTH&#39;/&gt;
@@ -1221,6 +1403,26 @@ protocol that broadcasts an unique message identifier for each beacon.</p>
 &lt;uses-permission android:name=&quot;com.google.android.gms.permission.ACTIVITY_RECOGNITION&quot; /&gt;
 &lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
 &lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
+</code></pre><p> Or the following permissions to the AndroidManifest.xml for <strong>android &gt;=10</strong> using AndroidX</p>
+<pre><code>&lt;uses-permission android:name=&quot;android.permission.ACCESS_FINE_LOCATION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_COARSE_LOCATION&quot; /&gt;
+    &lt;!-- Required only when requesting background location access on
+ Android 10 (API level 29) and higher. --&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_BACKGROUND_LOCATION&quot; /&gt;
+
+&lt;uses-permission android:name=&#39;android.permission.BLUETOOTH&#39;/&gt;
+&lt;uses-permission android:name=&#39;android.permission.BLUETOOTH_ADMIN&#39;/&gt;
+&lt;uses-feature android:name=&quot;android.hardware.bluetooth_le&quot; android:required=&quot;true&quot;/&gt;
+
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_WIFI_STATE&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.CHANGE_WIFI_STATE&quot; /&gt;
+
+&lt;uses-permission android:name=&quot;android.permission.RECEIVE_BOOT_COMPLETED&quot; /&gt;
+    &lt;!-- ACTIVITY_RECOGNITION permission has its package changed 
+ on Android 10 (API level 29) and higher. --&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACTIVITY_RECOGNITION&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.INTERNET&quot; /&gt;
+&lt;uses-permission android:name=&quot;android.permission.ACCESS_NETWORK_STATE&quot; /&gt;
 </code></pre><p>Add services below within the tag application</p>
 <pre><code>&lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPSendDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Send Data Service&quot;/&gt;
 &lt;service android:name=&quot;digital.tail.sdk.tail_mobile_sdk.TailDMPCollectDataJobService&quot;  android:permission=&quot;android.permission.BIND_JOB_SERVICE&quot; android:label=&quot;Tail DMP Collect Data Service&quot;/&gt;
@@ -1230,7 +1432,7 @@ protocol that broadcasts an unique message identifier for each beacon.</p>
 </code></pre><h4 id="graddle-configurations">Graddle Configurations</h4>
 <p>For proper operation of the SDK, we use google play service libraries. They must be compiled within the app.</p>
 <p>We must add to our gradle dependencies the following libraries: com.google.android.gms:play-services-nearby and play-services-location. </p>
-<p>Below an example of how the dependency configuration of the gradle.build file should be:</p>
+<p>Below an example of how the dependency configuration of the gradle.build for <strong>android &lt;=9</strong> file should be:</p>
 <pre>
 
 apply plugin: 'com.android.application'
@@ -1260,7 +1462,6 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:16.0.0'
     compile 'com.google.android.gms:play-services-location:16.0.0'
     compile 'com.google.android.gms:play-services-nearby:16.0.0'
-    compile 'com.google.android.gms:play-services-ads:16.0.0'
     </b>
 
     compile 'com.android.support:appcompat-v7:25.3.1'
@@ -1272,6 +1473,64 @@ dependencies {
 
 </pre>
 
+
+
+
+<p>Below an example of how the dependency configuration of the gradle.build for <strong>android &gt;=10</strong> with AndroidX  should be:</p>
+<p>Ex.</p>
+<pre>
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion <b>30</b>
+
+    defaultConfig {
+        applicationId "tail.digital.app"
+        minSdkVersion <b>25</b>
+        targetSdkVersion <b>30</b>
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    <b>
+    //playservices on androidx has some packages changed
+    implementation 'com.google.android.gms:play-services-identity:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
+
+    </b>
+
+    //get sdk from maven central
+    //change 1.2.+ to the latest version available
+    implementation 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'
+
+    //new androidx libs
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+</pre>
 
 
 
