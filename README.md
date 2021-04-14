@@ -241,7 +241,7 @@ dependencies {
 </pre>
 
 
-#### Bellow there is an example of how gradle.build file should be for android >=10 usando lib AndroidX
+#### Bellow there is an example of how gradle.build file should be for android >=10  AndroidX
 
 Ex.
 <pre>
@@ -442,7 +442,7 @@ Ex.
 
 
 
-#### Request permission to capture geolocation data
+### Request permission to capture geolocation data
 To recover the device’s geolocation it is necessary to request the user’s permission. 
 We can use the Helper provided by Android - ActivityCompat.requestPermissions to implement this workflow.
 We recommends that this action should be executed before the start of SDK, on initializing of your app for example.
