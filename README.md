@@ -1,4 +1,5 @@
 
+
 # TAILDMP SDK ANDROID
 
 > The TailDMP SDK is a mobile data library used to send and collect data from mobile devices, which will be used by TailTarget. The library provides an automatization mechanism for collecting and sending data, it’s just necessary define the periodicity between the sending requests.  
@@ -31,6 +32,14 @@ In android versions <= 9 it was only necessary to ask permission for the user on
 
 Starting with version 10 of android, google has changed the way to request location permissions, for that it is necessary to use a permission flow in two steps, one for use in the foreground and tracking of activities and then for use of location in background.
 
+Starting with  **version 11** there're new rules to use features like ACTIVITY_RECOGNITION , ACCESS_FINE_LOCATION
+ , ACCESS_COARSE_LOCATION e ACCESS_BACKGROUND_LOCATION. 
+
+User must be asked and allow the use of each feature and to get these data your app must have features that justifies its use.
+
+
+
+
 If you're using **AndroidX**, some permissions has its package changed, see bellow comments about **android 10** use.
 
 
@@ -53,7 +62,7 @@ TailDMP SDK uses background location service, but for your app get it on android
 More details on how to implement it can be found at:
 https://developer.android.com/training/location/permissions#request-background-location
 
-
+**We will not collect data linked to permissions if the user does not agree to the use. If your app doesn't need to use any of these permissions, don't add them in your AndroidManifest.**
 
 Add services below within the tag application
 
@@ -174,6 +183,13 @@ You must add these libs to your gradle dependencies:
 - play-services-location:16.0.0
 - play-services-nearby:16.0.0
 
+If your android app targets android > 11 you must add the lib play-services-ads on its version 16.0.0
+- com.google.android.gms:play-services-ads:16.0.0
+
+If you want to upgrade to a newer version of this lib you must include 
+your Ad Manager app ID on AndroidManifest or you won't be able to compile.
+
+
 
 Below is an example of how the dependency configuration of the *gradle.build* file should be:
 
@@ -188,6 +204,12 @@ dependencies {
     <b>compile 'com.google.android.gms:play-services-identity:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-location:16.0.0'</b>
     <b>compile 'com.google.android.gms:play-services-nearby:16.0.0'</b>
+
+    //If your android app targets android > 11 you must add this lib on its version 16.0.0
+    //If you want to upgrade to a newer version of this lib you must include 
+    //your Ad Manager app ID on AndroidManifest or you won't be able to compile
+    <b>implementation 'com.google.android.gms:play-services-ads:16.0.0'</b>
+
     //get sdk from maven central
     //change 1.2.+ to the latest version available
     <b>compile 'digital.tail.sdk.tail_mobile_sdk:tail-mobile-sdk:1.2.+'</b>
@@ -281,6 +303,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-identity:17.0.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
+
+    //If your android app targets android > 11 you must add this lib on its version 16.0.0
+    //If you want to upgrade to a newer version of this lib you must include 
+    //your Ad Manager app ID on AndroidManifest or you won't be able to compile
+    implementation 'com.google.android.gms:play-services-ads:16.0.0'
     
     </b>
 
@@ -621,8 +648,13 @@ public void onRequestPermissionsResult(int requestCode, @NonNull String[] permis
 </pre>
 
 
-#### Sending Data Without Automatic Scheduling
+## Sending Data Without Automatic Scheduling
 We can use the SDK to collect and send data of devices without the scheduling mechanism. 
+
+**We suggest the use of this method when you don't need to use scheduling mechanism or when your app targets android version <5.** 
+**You can call the method on some event of app like click, create , etc.** 
+
+
 
 **We suggest the use of this method for all devices with Android 4 version installed**. 
 
@@ -661,7 +693,7 @@ Ex.
                 // Set user as optin (required)
                 TailDMP.getInstance().setOptin(true);
 
-                //Send data to webservice without a scheduled job Service, passing an enpty string as tag.
+                //Send data to webservice without a scheduled job Service, passing an empty string as tag.
                 TailDMP.getInstance().sendData("");
 
 
@@ -912,6 +944,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-identity:17.0.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
+    //If your android app targets android > 11 you must add this lib on its version 16.0.0
+    //If you want to upgrade to a newer version of this lib you must include 
+    //your Ad Manager app ID on AndroidManifest or you won't be able to compile
+    implementation 'com.google.android.gms:play-services-ads:16.0.0'
+    
     
     </b>
 
